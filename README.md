@@ -130,33 +130,55 @@ function draw() {
 画一个以（x,y）为圆心的以radius为半径的圆弧（圆），从startAngle开始到endAngle结束，按照anticlockwise给定的方向（默认为顺时针）来生成。
 **arc()函数中表示角的单位是弧度，不是角度 弧度=(Math.PI/180)\*角度  **
 
-```js
-function draw() {
- var canvas = document.getElementById('canvas');
- if (canvas.getContext){
- var ctx = canvas.getContext('2d');
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    canvas{
+      border: solid blue 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas width="600" height="800">
+      当前浏览器不支持canvas标签
+    </canvas>
+  </div>
+  <script>
+    var canvas = document.getElementsByTagName('canvas')[0];
+    if(canvas.getContext){
+      var cx = canvas.getContext('2d');
+      for(var i=0;i<4;i++){
+        for(var j=0;j<3;j++){
 
- for(var i=0;i<4;i++){
- for(var j=0;j<3;j++){
- ctx.beginPath();
- var x = 25+j*50; // x 坐标值
- var y = 25+i*50; // y 坐标值
- var radius = 20; // 圆弧半径
- var startAngle = 0; // 开始点
- var endAngle = Math.PI+(Math.PI*j)/2; // 结束点
- var anticlockwise = i%2==0 ? false : true; // 顺时针或逆时针
+          var x = (2*j+1)*25+((2*j+1)*75);
+          var y = (2*i+1)*25+((2*i+1)*75);
 
- ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
-
- if (i>1){
- ctx.fill();
- } else {
- ctx.stroke();
- }
- }
- }
- }
-}
+          var startAngle = 0;// 开始都是x轴
+          var endAngel = Math.PI + (Math.PI*j/2);
+          var anticlockwise = i%2 == 0?false:true;
+          cx.beginPath();
+          cx.arc(x,y,75,startAngle,endAngel,anticlockwise);
+          if(i>1){
+            cx.fill();
+          }else{
+            cx.stroke();
+          }
+        }
+      }
+    }else{
+      alert('你的浏览器不支持canvas')
+    }
+  </script>
+</body>
+</html>
 ```
-[img](https://mdn.mozillademos.org/files/204/Canvas_arc.png)
+![img](https://mdn.mozillademos.org/files/204/Canvas_arc.png)
+
 
