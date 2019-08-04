@@ -1,38 +1,66 @@
-### 第一部分实现射线的动画效果
-1.window.requestAnimationFrame(this.run.bind(this))
-`window.requestAnimationFrame()` 区别于`setTimeout` 
+### 第二部分实现炸点效果 
+其实没有什么效果  无非是在射线的targetLocation处画一个闪烁的圆圈
 
-2.js数组问题
+1.炸点类的定义
 ```js
-// 讲实话确实有点颠覆我的认知啊
-var arr = new Array(10);
-arr.push('push');
-console.log('length',arr.length) // 11
-console.log('arr[0]',arr[0]) // undefined
-console.log('arr[10]',arr[10]) // 'push'
-
-```
-
-3.更新动画
-```js
-    // 每一帧都会调用
+  class BingBing{
+    constructor(targetX,targetY){
+      this.targetX = targetX
+      this.targetY = targetY
+      this.radius = 1
+    }
+    draw(){
+      context.beginPath()
+      context.lineWidth = 6
+      context.lineStyle = `rgba(${getRandomColor()},1)`
+      context.arc(this.targetX,this.targetY,this.radius,0,Math.PI*2)
+      context.stroke()
+    }
     update(){
-      //rayCollection 是存放的连续10个运动点的轨迹 方便画出射线
-      this.rayCollection.shift()
-      this.rayCollection.push([this.nowLocation.x,this.nowLocation.y])
-      // 计算当前动画走到的位置 严格来说 speed并不是速度 而是一帧所要走的路程 只不过时间单位是一帧 
-      let sx = this.speed*Math.cos(this.angle)
-      let sy = this.speed*Math.sin(this.angle)
-      let nowDistance = getDistance(this.startLocation.x,this.startLocation.y,this.nowLocation.x+sx,this.nowLocation.y+sy)
-      // 速度和加速度的改变
-      this.speed *= CONFIG.BiuAcceleration
-
-      if(nowDistance>=this.targetDistance){
-        this.arrived = true
+      if(this.radius>=CONFIG.BingMaxRadius){
+        this.radius = 1
       }else{
-        this.nowLocation.x = this.nowLocation.x+sx
-        this.nowLocation.y = this.nowLocation.y+sy
-        this.arrived = false
+        this.radius += 0.02
       }
     }
+    init(){
+      this.draw()
+      this.update()
+    }
+  }
+```
+
+2.生成和移除的时机问题
+
+```js
+// 在Animation的run方法内
+    run(){
+      window.requestAnimationFrame(this.run.bind(this))
+      context.clearRect(0,0,clientWidth,clientHeight)
+
+      this.initAnimation(this.bius,(index)=>{
+        this.bings[index].init()
+        if(this.bius[index].arrived){
+          this.bings.splice(index,1)
+          this.bius.splice(index,1)
+        }
+      })
+
+
+      if(this.nowTarget>=this.maxTarget){// 控制阀值 保证只有一定数量的射线 射出
+        var startX = Math.random()*(clientWidth/2)
+        var startY = clientHeight
+        var targetX = Math.random()*clientWidth
+        var targetY = Math.random()*(clientHeight/2)
+
+        let newBiu = new Biu(startX,startY,targetX,targetY)
+        let newBing = new BingBing(targetX,targetY)
+        this.bius.push(newBiu)
+        this.bings.push(newBing)
+        this.nowTarget = 0
+      }else{
+        this.nowTarget++
+      }
+    }
+
 ```
