@@ -1,6 +1,7 @@
 ### 第一部分实现射线的动画效果
 1.window.requestAnimationFrame(this.run.bind(this))
 `window.requestAnimationFrame()` 区别于`setTimeout` 
+
 2.js数组问题
 ```js
 // 讲实话确实有点颠覆我的认知啊
@@ -11,6 +12,7 @@ console.log('arr[0]',arr[0]) // undefined
 console.log('arr[10]',arr[10]) // 'push'
 
 ```
+
 3.更新动画
 ```js
     // 每一帧都会调用
